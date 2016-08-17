@@ -12,6 +12,8 @@ var makeSpy = require('./spy');
 
 var should = chai.should();
 
+var runBcryptAndSave = require('../runBcryptAndSave').runBcryptAndSave;
+
 chai.use(chaiHttp);
 
 describe('User endpoints', function() {
@@ -20,27 +22,15 @@ describe('User endpoints', function() {
         mongoose.connection.db.dropDatabase(done);
         this.singlePattern = new UrlPattern('/users/:userId');
         this.listPattern = new UrlPattern('/users');
+        // runBcryptAndSave('casey', 'password123', null);
     });
 
     describe('/users', function() {
         describe('GET', function() {
-            it('should return an empty list of users initially', function() {
-                // Get the list of users
-                return chai.request(app)
-                    .get(this.listPattern.stringify())
-                    .then(function(res) {
-                        // Check that it's an empty array
-                        res.should.have.status(200);
-                        res.type.should.equal('application/json');
-                        res.charset.should.equal('utf-8');
-                        res.body.should.be.an('array');
-                        res.body.length.should.equal(0);
-                    });
-            });
-
             it('should return a list of users', function() {
                 var user = {
-                    username: 'joe'
+                    username: 'joe',
+                    password : '$2a$10$UiykIHV8Qi3cvUZDzUiEneuKZiEtu0MWCAstSSMX0x3pc.0dYVjl.'
                 };
 
                 // Create a user
@@ -48,7 +38,8 @@ describe('User endpoints', function() {
                     .then(function() {
                         // Get the list of users
                         return chai.request(app)
-                                   .get(this.listPattern.stringify());
+                        .get(this.listPattern.stringify())
+                        .auth('joe', 'password123');
                     }.bind(this))
                     .then(function(res) {
                         // Check that the array contains a user
@@ -67,9 +58,10 @@ describe('User endpoints', function() {
             });
         });
         describe('POST', function() {
-            it('should allow adding a user', function() {
+            it.only('should allow adding a user', function() {
                 var user = {
-                    username: 'joe'
+                    username: 'yolixtly',
+                    password : 'helloworld'
                 };
 
                 // Add a user
@@ -178,7 +170,8 @@ describe('User endpoints', function() {
 
             it('should return a single user', function() {
                 var user = {
-                    username: 'joe'
+                    username: 'yolixtly',
+                    password : 'helloworld'
                 };
                 var userId;
                 // Add a user to the database
@@ -210,10 +203,12 @@ describe('User endpoints', function() {
         describe('PUT', function() {
             it('should allow editing a user', function() {
                 var oldUser = {
-                    username: 'joe'
+                    username: 'joe',
+                    password : 'somethin'
                 };
                 var newUser = {
-                    username: 'joe2'
+                    username: 'joe2',
+                    password: 'newsomething'
                 };
                 var userId;
                 // Add a user to the database

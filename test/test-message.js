@@ -25,11 +25,13 @@ describe('Message endpoints', function() {
             // Add three example users
             this.alice = {
                 username: 'alice',
+                password : '$2a$10$UiykIHV8Qi3cvUZDzUiEneuKZiEtu0MWCAstSSMX0x3pc.0dYVjl.',
                 _id: 'aaaaaaaaaaaaaaaaaaaaaaaa'
             };
 
             this.bob = {
                 username: 'bob',
+                // password: hashed things
                 _id: 'bbbbbbbbbbbbbbbbbbbbbbbb'
             };
 
@@ -352,6 +354,7 @@ describe('Message endpoints', function() {
                 // Add a message
                 return chai.request(app)
                     .post(this.listPattern.stringify())
+                    .auth('alice', 'aaa')
                     .send(message)
                     .then(function(res) {
                         // Check that an empty object was returned

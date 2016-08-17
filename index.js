@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 var passport = require('passport');
 var BasicStrategy = require('passport-http').BasicStrategy;
-
+var runBcryptAndSave = require('./runBcryptAndSave').runBcryptAndSave;
 
 var app = express();
 
@@ -58,7 +58,7 @@ passport.use(strategy);
 //By default, if authentication fails, Passport will respond with a 401 Unauthorized status
 
 // Add your API endpoints here
-                                                 //You also indicate that you don't want to store a session cookie to keep identifying the use
+            //basic is the type of authentication  //You also indicate that you don't want to store a session cookie to keep identifying the use
 app.get('/hidden', passport.authenticate('basic', {session: false}), function(req, res) {
     res.json({
         message: 'Luke... I am your father'
@@ -67,8 +67,9 @@ app.get('/hidden', passport.authenticate('basic', {session: false}), function(re
 
 //added passport.authenticate to users route
 app.get('/users', passport.authenticate('basic', {session: false}), function(req, res) {
-
+// app.get('/users', function(req, res) {
     User.find(function(err, users) {
+        console.log(users);
         if (err) {
             return res.status(500).json({
                 message: 'Internal Server Error'
@@ -158,40 +159,9 @@ app.post('/users', jsonParser, function(req, res) {
         });
     }
     // Generating the Salt and Hash (10 identifys the rounds of saltHash generated)
-    bcrypt.genSalt(10, function(err, salt) {
-        console.log('new Salt: ', salt);
-        if (err) {
-            return res.status(500).json({
-                message: 'Internal server error'
-            });
-        }
+    runBcryptAndSave(username, password, res);
+    
 
-        bcrypt.hash(password, salt, function(err, hash) {
-            if (err) {
-                return res.status(500).json({
-                    message: 'Internal server error'
-                });
-            }
-
-            console.log('the hash: ', hash);
-            // new Instance of User from the user-schema
-            var user = new User({
-                username: username,
-                password: hash
-            });
-
-            //save method from Passport library;
-            user.save(function(err) {
-                if (err) {
-                    return res.status(500).json({
-                        message: 'Internal server error'
-                    });
-                }
-
-                return res.status(201).json({});
-            });
-        });
-    });
 });
 
 app.put('/users/:userId', jsonParser, function(req, res) {
@@ -199,7 +169,8 @@ app.put('/users/:userId', jsonParser, function(req, res) {
     User.findByIdAndUpdate({
             _id: req.params.userId
         }, {
-            username: req.body.username
+            username: req.body.username,
+            //password: req.body.password do we need this? 
         },
         function(err, user) {
             console.log('my user:' + user);
@@ -212,19 +183,23 @@ app.put('/users/:userId', jsonParser, function(req, res) {
             console.log('This Updated');
 
             //should create a user if they don't exist
-            if (!user) {
-                User.create({
-                    username: req.body.username,
-                    _id: req.params.userId
+            runBcryptAndSave(username, password, res);
+            // if (!user) {
+            //     // app.redirect("POST","/users")
+            //     User.create({
+            //         username: req.body.username,
+            //         //do we require a password to be created?
+            //         password : req.body.password, 
+            //         _id: req.params.userId
 
-                    //     }, function(err, user) {
-                    //         if (err) {
-                    //         return res.status(500);
-                    //         }
-                    //         res.status(200).json(user);
-                });
+            //         //     }, function(err, user) {
+            //         //         if (err) {
+            //         //         return res.status(500);
+            //         //         }
+            //         //         res.status(200).json(user);
+            //     });
 
-            }
+            // }
 
         });
 
@@ -377,8 +352,9 @@ app.get('/messages/:messageId', function(req, res) {
             //should return a single message    
             res.json(messages);
         });
-
+    
 });
+//how we are going to create a user
 
 
 

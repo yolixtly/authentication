@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
+var Message = require('./message.js');
 var UserSchema = new mongoose.Schema({
     username: {
         type: String,
@@ -12,9 +13,12 @@ var UserSchema = new mongoose.Schema({
     }
     // to : {
     //     type: [Message],
-    //     key: 'to'
+    //     key: Message.to
     // }
+
 });
+    // console.log(Message.to,  " Message");
+
 
 //Validating/Checking a password
 UserSchema.methods.validatePassword = function(password, callback) {
