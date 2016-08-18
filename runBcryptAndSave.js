@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var User = require('./models/user');
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 
 function runBcryptAndSave(username, password, res, req) {
        // if the request doesnt exists at all 
