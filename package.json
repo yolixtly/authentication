@@ -4,11 +4,11 @@
   "description": "A messaging API",
   "main": "index.js",
   "directories": {
-    "test": "tests",
-    "start" : "node index"
+    "test": "tests"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+     "start" : "node index"
   },
   "keywords": [
     "messaging"
