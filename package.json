@@ -4,7 +4,7 @@
   "description": "A messaging API",
   "main": "index.js",
   "directories": {
-    "test": "tests"
+    "test": "tests",
     "start" : "node index"
   },
   "scripts": {
