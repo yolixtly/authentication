@@ -25,7 +25,7 @@ var strategy = new BasicStrategy(function(username, password, callback) {
     //fetch the user which matches the username provided
     User.findOne({
         username: username
-    }, function(err, user) {
+    }, function (err, user) {
         if (err) {
             callback(err);
             return;
@@ -58,20 +58,16 @@ passport.use(strategy);
 //By default, if authentication fails, Passport will respond with a 401 Unauthorized status
 
 // Add your API endpoints here
-//basic is the type of authentication  //You also indicate that you don't want to store a session cookie to keep identifying the use
-app.get('/hidden', passport.authenticate('basic', {
-    session: false
-}), function(req, res) {
+            //basic is the type of authentication  //You also indicate that you don't want to store a session cookie to keep identifying the use
+app.get('/hidden', passport.authenticate('basic', {session: false}), function(req, res) {
     res.json({
         message: 'Luke... I am your father'
     });
 });
 
 //added passport.authenticate to users route
-app.get('/users', passport.authenticate('basic', {
-    session: false
-}), function(req, res) {
-    // app.get('/users', function(req, res) {
+app.get('/users', passport.authenticate('basic', {session: false}), function(req, res) {
+// app.get('/users', function(req, res) {
     User.find(function(err, users) {
         console.log(users);
         if (err) {
@@ -110,102 +106,64 @@ app.get('/users/:userId', function(req, res) {
 
 app.post('/users', jsonParser, function(req, res) {
 
-    if (!req.body) {
-        return res.status(400).json({
-            message: "No request body"
-        });
-    }
+    // // if the request doesnt exists at all 
+    // if (!req.body) {
+    //     return res.status(400).json({
+    //         message: "No request body"
+    //     });
+    // }
 
-    if (!('username' in req.body)) {
-        return res.status(422).json({
-            message: 'Missing field: username'
-        });
-    }
-    //save the value in username in a variable 
+    // if (!('username' in req.body)) {
+    //     return res.status(422).json({
+    //         message: 'Missing field: username'
+    //     });
+    // }
+    // //save the value in username in a variable 
     var username = req.body.username;
-    console.log(username, 'the user ');
+    // console.log(username, 'the user ');
 
-    if (typeof username !== 'string') {
-        return res.status(422).json({
-            message: 'Incorrect field type: username'
-        });
-    }
-    //removes the spaces from the inputs
-    username = username.trim();
+    // if (typeof username !== 'string') {
+    //     return res.status(422).json({
+    //         message: 'Incorrect field type: username'
+    //     });
+    // }
+    // //removes the spaces from the inputs
+    // username = username.trim();
 
-    if (username === '') {
-        return res.status(422).json({
-            message: 'Incorrect field length: username'
-        });
-    }
+    // if (username === '') {
+    //     return res.status(422).json({
+    //         message: 'Incorrect field length: username'
+    //     });
+    // }
 
-    if (!('password' in req.body)) {
-        return res.status(422).json({
-            message: 'Missing field: password'
-        });
-    }
+    // if (!('password' in req.body)) {
+    //     return res.status(422).json({
+    //         message: 'Missing field: password'
+    //     });
+    // }
 
     var password = req.body.password;
-    console.log(password, 'the password ');
+    // console.log(password, 'the password ');
 
-    if (typeof password !== 'string') {
-        return res.status(422).json({
-            message: 'Incorrect field type: password'
-        });
-    }
+    // if (typeof password !== 'string') {
+    //     return res.status(422).json({
+    //         message: 'Incorrect field type: password'
+    //     });
+    // }
 
-    password = password.trim();
+    // password = password.trim();
 
-    if (password === '') {
-        return res.status(422).json({
-            message: 'Incorrect field length: password'
-        });
-    }
-    bcrypt.genSalt(10, function(err, salt) {
-        console.log('new Salt: ', salt);
-        if (err) {
-            if (res !== null) {
-                return res.status(500).json({
-                    message: 'Internal server error'
-                });
-            }
-        }
+    // if (password === '') {
+    //     return res.status(422).json({
+    //         message: 'Incorrect field length: password'
+    //     });
+    // }
+    // Generating the Salt and Hash (10 identifys the rounds of saltHash generated)
+    runBcryptAndSave(username, password, res, req);
+    
+    
 
-        bcrypt.hash(password, salt, function(err, hash) {
-            if (err) {
-                if (res !== null) {
-                    return res.status(500).json({
-                        message: 'Internal server error'
-                    });
-                }
-            }
-
-            console.log('the hash: ', hash);
-            // new Instance of User from the user-schema
-            var user = new User({
-                username: username,
-                password: hash
-            });
-
-            user.save(function(err) {
-                console.log('user saved')
-                if (err) {
-                    if (res !== null) {
-                        return res.status(500).json({
-                            message: 'Internal server error'
-                        });
-                    }
-                }
-                //should have header (location)  "setting up location response HTTP header Express framework"
-                // everytime we create a new user, we send a location header that contains a unique URL
-                if (res !== null) {
-                    res.location('/users/' + user._id);
-                    // return res.status(201).json({});
-                    return res.status(200).json({});
-                }
-            });
-        });
-    });
+    
 
 });
 
@@ -224,32 +182,42 @@ app.put('/users/:userId', jsonParser, function(req, res) {
                     message: 'Internal Server Error'
                 });
             }
-
-            //should reject users without a username
-            if (!req.body.username) {
-                return res.status(422).json({
-                    message: 'Missing field: username'
-                });
-            }
-
-            //should reject non-string usernames
-            if (typeof(req.body.username) !== 'string') {
-                return res.status(422).json({
-                    message: 'Incorrect field type: username'
-                });
-            }
-
+            
+           
+            
             console.log('This Updated');
+            
+            if(!user) {
 
-            if (!user) {
-
-                var username = req.body.username;
-                var password = req.body.password;
-                //should create a user if they don't exist
-                // runBcryptAndSave(username, password, res, req);
-                return runBcryptAndSave(username, password, res, req);
+            var username = req.body.username;
+            var password = req.body.password;
+            //should create a user if they don't exist
+             return runBcryptAndSave(username, password, res, req);
+             //res.status(200).json({})
             }
+            
+            // res.status(200).json({}); // no ideal
+
+            
         });
+
+    //should reject users without a username
+    if (!req.body.username) {
+        return res.status(422).json({
+            message: 'Missing field: username'
+        });
+    }
+
+    //should reject non-string usernames
+    if (typeof(req.body.username) !== 'string') {
+        return res.status(422).json({
+            message: 'Incorrect field type: username'
+        });
+    }
+
+
+
+
 });
 
 
@@ -268,16 +236,14 @@ app.delete('/users/:userId', function(req, res) {
     });
 });
 
-app.get('/messages', jsonParser, passport.authenticate('basic', {
-    session: false
-}), function(req, res) {
+app.get('/messages', jsonParser, passport.authenticate('basic', {session: false}), function(req, res) {
     //
-    var reqUrl = req.url;
+    var reqUrl = req.url; 
     var query = url.parse(reqUrl).query;
     console.log('reqUrl' + reqUrl);
     console.log('query(parse)' + query);
     console.log(queryString.parse(query));
-
+    
     Message.find(
         queryString.parse(query)
     ).populate('from').populate('to').exec(function(err, messages) {
@@ -385,7 +351,7 @@ app.get('/messages/:messageId', function(req, res) {
             //should return a single message    
             res.json(messages);
         });
-
+    
 });
 //how we are going to create a user
 
