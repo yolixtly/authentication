@@ -25,7 +25,7 @@ var strategy = new BasicStrategy(function(username, password, callback) {
     //fetch the user which matches the username provided
     User.findOne({
         username: username
-    }, function (err, user) {
+    }, function(err, user) {
         if (err) {
             callback(err);
             return;
@@ -58,16 +58,20 @@ passport.use(strategy);
 //By default, if authentication fails, Passport will respond with a 401 Unauthorized status
 
 // Add your API endpoints here
-            //basic is the type of authentication  //You also indicate that you don't want to store a session cookie to keep identifying the use
-app.get('/hidden', passport.authenticate('basic', {session: false}), function(req, res) {
+//basic is the type of authentication  //You also indicate that you don't want to store a session cookie to keep identifying the use
+app.get('/hidden', passport.authenticate('basic', {
+    session: false
+}), function(req, res) {
     res.json({
         message: 'Luke... I am your father'
     });
 });
 
 //added passport.authenticate to users route
-app.get('/users', passport.authenticate('basic', {session: false}), function(req, res) {
-// app.get('/users', function(req, res) {
+app.get('/users', passport.authenticate('basic', {
+    session: false
+}), function(req, res) {
+    // app.get('/users', function(req, res) {
     User.find(function(err, users) {
         console.log(users);
         if (err) {
@@ -160,10 +164,10 @@ app.post('/users', jsonParser, function(req, res) {
     // }
     // Generating the Salt and Hash (10 identifys the rounds of saltHash generated)
     runBcryptAndSave(username, password, res, req);
-    
-    
 
-    
+
+
+
 
 });
 
@@ -184,45 +188,41 @@ app.put('/users/:userId', jsonParser, function(req, res) {
             }
 
             console.log('This Updated');
-            
-             if (!req.body.username) {
-        return res.status(422).json({
-            message: 'Missing field: username'
-        });
-    }
 
-    //should reject non-string usernames
-    if (typeof(req.body.username) !== 'string') {
-        return res.status(422).json({
-            message: 'Incorrect field type: username'
-        });
-    }
-
-
-
-            
-            
-            if(!user) {
-
-            var username = req.body.username;
-            var password = req.body.password;
-            
-            
-            
-            //should create a user if they don't exist
-             
-             
-             return runBcryptAndSave(username, password, res, req);
-             //res.status(200).json({})
+            if (!req.body.username) {
+                return res.status(422).json({
+                    message: 'Missing field: username'
+                });
             }
-            
+
+            //should reject non-string usernames
+            if (typeof(req.body.username) !== 'string') {
+                return res.status(422).json({
+                    message: 'Incorrect field type: username'
+                });
+            }
+
+            if (!user) {
+
+                var username = req.body.username;
+                var password = req.body.password;
+
+
+
+                //should create a user if they don't exist
+
+
+                return runBcryptAndSave(username, password, res, req);
+                //res.status(200).json({})
+            }
+
             // res.status(200).json({}); // no ideal
 
-            
+
         });
 
     //should reject users without a username
-   
+
 
 });
 
@@ -242,14 +242,16 @@ app.delete('/users/:userId', function(req, res) {
     });
 });
 
-app.get('/messages', jsonParser, passport.authenticate('basic', {session: false}), function(req, res) {
+app.get('/messages', jsonParser, passport.authenticate('basic', {
+    session: false
+}), function(req, res) {
     //
-    var reqUrl = req.url; 
+    var reqUrl = req.url;
     var query = url.parse(reqUrl).query;
     console.log('reqUrl' + reqUrl);
     console.log('query(parse)' + query);
     console.log(queryString.parse(query));
-    
+
     Message.find(
         queryString.parse(query)
     ).populate('from').populate('to').exec(function(err, messages) {
@@ -357,14 +359,14 @@ app.get('/messages/:messageId', function(req, res) {
             //should return a single message    
             res.json(messages);
         });
-    
+
 });
 //how we are going to create a user
 
 
 
 var runServer = function(callback) {
-    var databaseUri = process.env.DATABASE_URI || global.databaseUri || 'mongodb://localhost/auth';
+    var databaseUri = process.env.DATABASE_URI || global.databaseUri || 'mongodb://yolixtly:helloWorld@ds161245.mlab.com:61245/sup-application';
     mongoose.connect(databaseUri).then(function() {
         User.find(function(err, users) {
             console.log('users : ', users);
