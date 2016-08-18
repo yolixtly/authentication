@@ -30,7 +30,7 @@ describe('User endpoints', function() {
             it('should return a list of users', function() {
                 var user = {
                     username: 'joe',
-                    password : '$2a$10$UiykIHV8Qi3cvUZDzUiEneuKZiEtu0MWCAstSSMX0x3pc.0dYVjl.'
+                    password : '$2a$10$GR/UPqiRro9sQzzKOhMHA.ABXDwtl5tYe/nFMpwGD40qXdct.nhKm'
                 };
 
                 // Create a user
@@ -39,7 +39,7 @@ describe('User endpoints', function() {
                         // Get the list of users
                         return chai.request(app)
                         .get(this.listPattern.stringify())
-                        .auth('joe', 'password123');
+                        .auth('joe', 'helloworld');
                     }.bind(this))
                     .then(function(res) {
                         // Check that the array contains a user
@@ -58,7 +58,7 @@ describe('User endpoints', function() {
             });
         });
         describe('POST', function() {
-            it.only('should allow adding a user', function() {
+            it('should allow adding a user', function() {
                 var user = {
                     username: 'yolixtly',
                     password : 'helloworld'
@@ -241,10 +241,11 @@ describe('User endpoints', function() {
                         res.username.should.equal(newUser.username);
                     });
             });
-            it('should create a user if they don\'t exist', function() {
+            it.only('should create a user if they don\'t exist', function() {
                 var user = {
                     _id: '000000000000000000000000',
-                    username: 'joe'
+                    username: 'joe',
+                    password: 'hello123'
                 };
                 // Request to add a new user
                 return chai.request(app)
@@ -259,11 +260,11 @@ describe('User endpoints', function() {
                         res.charset.should.equal('utf-8');
                         res.body.should.be.an('object');
                         res.body.should.be.empty;
-
+                        console.log(User, 'THIS IS USER');
                         // Fetch the user from the database
                         return User.findById(user._id).exec();
-                    })
-                    .then(function(res) {
+                      
+                        console.log(res, 'response ');
                         // Check that the user has been added
                         should.exist(res);
                         res.should.have.property('username');

@@ -106,60 +106,63 @@ app.get('/users/:userId', function(req, res) {
 
 app.post('/users', jsonParser, function(req, res) {
 
-    // if the request doesnt exists at all 
-    if (!req.body) {
-        return res.status(400).json({
-            message: "No request body"
-        });
-    }
+    // // if the request doesnt exists at all 
+    // if (!req.body) {
+    //     return res.status(400).json({
+    //         message: "No request body"
+    //     });
+    // }
 
-    if (!('username' in req.body)) {
-        return res.status(422).json({
-            message: 'Missing field: username'
-        });
-    }
-    //save the value in username in a variable 
+    // if (!('username' in req.body)) {
+    //     return res.status(422).json({
+    //         message: 'Missing field: username'
+    //     });
+    // }
+    // //save the value in username in a variable 
     var username = req.body.username;
-    console.log(username, 'the user ');
+    // console.log(username, 'the user ');
 
-    if (typeof username !== 'string') {
-        return res.status(422).json({
-            message: 'Incorrect field type: username'
-        });
-    }
-    //removes the spaces from the inputs
-    username = username.trim();
+    // if (typeof username !== 'string') {
+    //     return res.status(422).json({
+    //         message: 'Incorrect field type: username'
+    //     });
+    // }
+    // //removes the spaces from the inputs
+    // username = username.trim();
 
-    if (username === '') {
-        return res.status(422).json({
-            message: 'Incorrect field length: username'
-        });
-    }
+    // if (username === '') {
+    //     return res.status(422).json({
+    //         message: 'Incorrect field length: username'
+    //     });
+    // }
 
-    if (!('password' in req.body)) {
-        return res.status(422).json({
-            message: 'Missing field: password'
-        });
-    }
+    // if (!('password' in req.body)) {
+    //     return res.status(422).json({
+    //         message: 'Missing field: password'
+    //     });
+    // }
 
     var password = req.body.password;
-    console.log(password, 'the password ');
+    // console.log(password, 'the password ');
 
-    if (typeof password !== 'string') {
-        return res.status(422).json({
-            message: 'Incorrect field type: password'
-        });
-    }
+    // if (typeof password !== 'string') {
+    //     return res.status(422).json({
+    //         message: 'Incorrect field type: password'
+    //     });
+    // }
 
-    password = password.trim();
+    // password = password.trim();
 
-    if (password === '') {
-        return res.status(422).json({
-            message: 'Incorrect field length: password'
-        });
-    }
+    // if (password === '') {
+    //     return res.status(422).json({
+    //         message: 'Incorrect field length: password'
+    //     });
+    // }
     // Generating the Salt and Hash (10 identifys the rounds of saltHash generated)
-    runBcryptAndSave(username, password, res);
+    runBcryptAndSave(username, password, res, req);
+    
+    
+
     
 
 });
@@ -170,7 +173,7 @@ app.put('/users/:userId', jsonParser, function(req, res) {
             _id: req.params.userId
         }, {
             username: req.body.username,
-            //password: req.body.password do we need this? 
+            password: req.body.password
         },
         function(err, user) {
             console.log('my user:' + user);
@@ -179,28 +182,23 @@ app.put('/users/:userId', jsonParser, function(req, res) {
                     message: 'Internal Server Error'
                 });
             }
-            res.status(200).json({});
+            
+           
+            
             console.log('This Updated');
+            
+            if(!user) {
 
+            var username = req.body.username;
+            var password = req.body.password;
             //should create a user if they don't exist
-            runBcryptAndSave(username, password, res);
-            // if (!user) {
-            //     // app.redirect("POST","/users")
-            //     User.create({
-            //         username: req.body.username,
-            //         //do we require a password to be created?
-            //         password : req.body.password, 
-            //         _id: req.params.userId
+             return runBcryptAndSave(username, password, res, req);
+             //res.status(200).json({})
+            }
+            
+            // res.status(200).json({}); // no ideal
 
-            //         //     }, function(err, user) {
-            //         //         if (err) {
-            //         //         return res.status(500);
-            //         //         }
-            //         //         res.status(200).json(user);
-            //     });
-
-            // }
-
+            
         });
 
     //should reject users without a username
@@ -239,12 +237,13 @@ app.delete('/users/:userId', function(req, res) {
 });
 
 app.get('/messages', jsonParser, passport.authenticate('basic', {session: false}), function(req, res) {
-
-    var reqUrl = req.url;
+    //
+    var reqUrl = req.url; 
     var query = url.parse(reqUrl).query;
     console.log('reqUrl' + reqUrl);
     console.log('query(parse)' + query);
     console.log(queryString.parse(query));
+    
     Message.find(
         queryString.parse(query)
     ).populate('from').populate('to').exec(function(err, messages) {
