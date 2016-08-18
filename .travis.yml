@@ -8,3 +8,10 @@ addons:
     - mongodb-3.2-precise
     packages:
     - mongodb-org-server
+deploy:
+  provider: heroku
+  api_key:
+    secure: SiG1jWM8VdvdeuGbLzY39R60trKUy5/tv0WYDd1VVjPjUf0YpRJWVXyVKBwlIONdC+mcDaEvD56y1kUGhhS9W8BGwHEkhZ8GfB9lJ2fXwiDkMQ9k7VAh5a9ET6TxSSMihYhEIncxCpnro3thJSbFnO4/3Uic9Wtk0DKu5eiIwkF2jpcJVtSiGkh8nnfWGKgswjoZ2TUy45x//LpwevRtqgMWKfxERgd1R3IaqG11Cp1kRzVBBnmgphZh5ZoU5dGuj015bTnGS6fRI0H5xUNrrF3g2K69iZmlR2dJKFNYLZRWixKNnO8wGlLO9SYj64+MVJy7tGAiCbct6grOa/aemAUqEo+p/QXeM/9tLS7TsxWvYjo1mRpYMKUzVfgw0Vy/TwpePvZ+m4vOJw0Pa8QNLImVhbCYAqNwvOYZ76Ao9hedX899LtuHhFJdggNv4JtMMsMVc3Trdsg41b3eXfQrC5FQaufdQP6UJixdaYCKKNRyRGrrc5KAnz4bUCYf3G4o3o9hTreizAahCyLjPJQeTMRlpJWxZdTTfTf9tDPBZNuVOQsjDiJ3Hi7u7DByRZy7fDFDtJ583TSYxF+Vo3LCtXRiy4PUfajkhegS9Ngrz4hY2/PezEoqdy6zcp7CcTlwWxlsCG5ih0uymMqhWoJN5eCyt4WORnde/KnKZ1fQS+I=
+  app: authentication
+  on:
+    repo: yolixtly/authentication

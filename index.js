@@ -366,7 +366,7 @@ app.get('/messages/:messageId', function(req, res) {
 
 
 var runServer = function(callback) {
-    var databaseUri = process.env.DATABASE_URI || global.databaseUri || 'mongodb://yolixtly:helloWorld@ds161245.mlab.com:61245/sup-application';
+    var databaseUri = process.env.DATABASE_URI || global.databaseUri || 'mongodb://sup-app:helloWorld@ds161245.mlab.com:61245/sup-application';
     mongoose.connect(databaseUri).then(function() {
         User.find(function(err, users) {
             console.log('users : ', users);
