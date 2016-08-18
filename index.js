@@ -182,27 +182,10 @@ app.put('/users/:userId', jsonParser, function(req, res) {
                     message: 'Internal Server Error'
                 });
             }
-            
-           
-            
+
             console.log('This Updated');
             
-            if(!user) {
-
-            var username = req.body.username;
-            var password = req.body.password;
-            //should create a user if they don't exist
-             return runBcryptAndSave(username, password, res, req);
-             //res.status(200).json({})
-            }
-            
-            // res.status(200).json({}); // no ideal
-
-            
-        });
-
-    //should reject users without a username
-    if (!req.body.username) {
+             if (!req.body.username) {
         return res.status(422).json({
             message: 'Missing field: username'
         });
@@ -217,6 +200,29 @@ app.put('/users/:userId', jsonParser, function(req, res) {
 
 
 
+            
+            
+            if(!user) {
+
+            var username = req.body.username;
+            var password = req.body.password;
+            
+            
+            
+            //should create a user if they don't exist
+             
+             
+             return runBcryptAndSave(username, password, res, req);
+             //res.status(200).json({})
+            }
+            
+            // res.status(200).json({}); // no ideal
+
+            
+        });
+
+    //should reject users without a username
+   
 
 });
 

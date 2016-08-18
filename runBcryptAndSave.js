@@ -95,7 +95,9 @@ function runBcryptAndSave(username, password, res, req) {
                 if (res !== null) {
                     res.location('/users/' + user._id);
                     // return res.status(201).json({});
-                    return res.status(200).json({});
+                    return res.status(200).json({
+                        message : 'A new User has been Created!!'
+                    });
                 }
             });
         });
