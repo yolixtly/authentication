@@ -192,7 +192,8 @@ app.put('/users/:userId', jsonParser, function(req, res) {
             var username = req.body.username;
             var password = req.body.password;
             //should create a user if they don't exist
-             return runBcryptAndSave(username, password, res, req);
+            runBcryptAndSave(username, password, res, req);
+            //  return runBcryptAndSave(username, password, res, req);
              //res.status(200).json({})
             }
             
